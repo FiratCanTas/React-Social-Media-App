@@ -1,0 +1,11 @@
+.rightBar{
+    flex: 3;
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px); //leftbar kaplayacağı alanı belirttim
+    overflow: scroll; //leftbar ekleme yaparsam taşanları scroll ile görüntülemek istiyorum
+
+    &::-webkit-scrollbar{
+        display: none; //Scroll bar görüntüsü kötü durduğu için gizliyorum
+    }
+}
