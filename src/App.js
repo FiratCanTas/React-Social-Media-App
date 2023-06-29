@@ -12,14 +12,24 @@ import LeftBar from "./components/leftBar/LeftBar.jsx"
 import RightBar from "./components/rightBar/RightBar.jsx"
 import Home from "./pages/home/Home.jsx"
 import Profile from "./pages/profile/Profile.jsx"
+import "./style.scss"
+import { useContext } from "react";
+import { DarkModeContext } from "./context/darkModeContext.js";
 
+
+
+function App() {
 
 const currentUser = true
 
 
+const {darkMode} = useContext(DarkModeContext)
+
+console.log(darkMode);
+
 const Layout = ()=> {
   return(
-    <>
+    <div className={`theme-${darkMode ? "dark" : "light"}`}>
       <Navbar/>
       <div style={{ display:"flex" }}>
         <LeftBar/>
@@ -28,7 +38,7 @@ const Layout = ()=> {
         </div>
         <RightBar/>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -69,7 +79,6 @@ const router = createBrowserRouter([
 ]);
 
 
-function App() {
   return (
     <div>
       <RouterProvider router={router} />

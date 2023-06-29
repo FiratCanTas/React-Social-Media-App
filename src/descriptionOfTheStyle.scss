@@ -1,0 +1,64 @@
+
+//tekrar kullanılabilir tema ve stil özelliklerini içeren bir harita(map) olan themes değişkenini oluşturdum.
+
+//Themes farklı temaları temsil eden alt haritaların (light-dark vb.) bir araya getirildiği ana haritadır.
+
+$themes: ( 
+    light: (
+        textColor: #000,
+        bg: white,
+        logo: darkblue,
+        bgSoft: #f6f3f3,
+        textColorsoft: #555,
+        border: lightgray
+    ),
+
+    dark: (
+        textColor: whitesmoke,
+        bg: #222,
+        logo: white,
+        bgSoft: #333,
+        textColorsoft: lightgray,
+        border: #444
+    ),
+);
+
+
+// "Mixin", tekrar kullanılabilir stil kodlarını gruplamak ve çağırmak için kullanılır. Mixin, bir blok olarak tanımlanır ve @include ile çağrılır.
+
+
+// "!global" kullanarak bir değişkenin etki alanını genişletebilir ve değişkeni tüm koddaki herhangi bir noktada erişilebilir hale getirebilirsiniz.
+
+
+
+@mixin themify($themes) { //themify adında stil tema bazlı stil tanımlarını yapmayı kolaylaştıran bir mixin oluşturdum 
+    
+    @each $theme, $map in $themes { //theme değişkeni tema adını (dark-light) ve map değişkeni stil özelliklerini içeren alt haritayı temsil eder
+
+        .theme-#{theme} & {//tema adlarını içeren bir CSS sınıfı tanımladım
+
+            $theme-map: () !global; //Başta boş olarak temaya özgü stil haritası tanımladım ve global olduğunu belirttim
+
+            @each $key, $submap in $map { //Alt stil haritasındaki stil özelliklerinin her birini döngüyle dönüyorum. $key değişkeni stil özelliği adını temsil eder. $submap değişkeni ise değeri içeren alt haritayı temsil eder.
+
+                $value: map-get(map-get($themes, $theme), "#{$key}"); //içteki map-get bize üst döngüde aldığımız theme değeri neyse themes içerisinden onun stil map ini getirir. Dıştaki map-get bize gelen stil map inin keylerini tek tek alıp (örn. "#textColor") değerlerini $value değişkenine atmamızı sağlar.
+
+                // Her döngü adımında $theme-map mevcut key ve value değerleriyle  güncellenip yeni değerlerle stil haritası oluşturulur.
+                $theme-map: map-merge( 
+                    $theme-map,
+                    (
+                        $key: $value
+                    )
+                ) !global
+            }
+            @content; //Bu ifade, mixin'in çağrıldığı yerdeki stil kodlarını içerir.
+            $theme-map: null !global; //Bir sonraki döngü aşaması için bu harita içeriğindeki stiller sıfırlanır.
+        }
+    }
+}
+
+@function themed($key) { //themed($key) fonksiyonu, $key değerine karşılık gelen stil değerini $theme-map haritasından almak için kullanılır.
+
+    @return map-get($theme-map, $key); //themed("textColor") fonksiyonunu çağırdığımızı varsayalım. Bu fonksiyon, $theme-map haritasında "textColor" anahtarına karşılık gelen stil değerini döndürür.
+}
+
